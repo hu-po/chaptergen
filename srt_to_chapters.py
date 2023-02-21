@@ -14,13 +14,13 @@ with open(args.input_file, 'r') as file:
     input_text = file.read()
 
 # Use regular expression to find the timestamp and text on separate lines
-pattern = r'\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3}\n(.+?)(?=\n\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3}\n|$)'
+pattern = r'(\d{2}:\d{2}:\d{2}),\d{3} --> (\d{2}:\d{2}:\d{2}),\d{3}\n(.+?)(?=\n)'
 matches = re.findall(pattern, input_text, re.DOTALL)
 
 # Write output to the specified file
 with open(args.output_file, 'w') as file:
     for i, match in enumerate(matches):
         print(f'match {i}: {match}')
-        timestamp = re.search(r'(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*\d{2}:\d{2}:\d{2},\d{3}', match).group(1)
-        text = re.sub(r'\n', ' ', match).replace(timestamp, '').strip()
-        file.write(f'{timestamp} - {text}\n')
+        start, end, text = match
+        file.write(f'{start[3:]} - {text}\n')
+        # file.write(text)
